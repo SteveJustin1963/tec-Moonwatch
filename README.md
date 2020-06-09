@@ -1,2 +1,2 @@
-# tec-UFO
-TEC-1 UFO Detector, actually optical tracking of anything in the sky
+# tec-Moonwatch
+TEC-1, optical tracking of anything in the sky, even UFO's
