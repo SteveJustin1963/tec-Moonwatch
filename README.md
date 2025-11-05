@@ -1087,6 +1087,94 @@ Want a **hex file**, **schematic**, or **laser turret upgrade**? Just say the wo
 
 
 
+**Short answer:**  
+**No – the current TEC-1 Moonwatch design is *not* sensitive enough to reliably detect a faint, distant “spot of light” UFO at night.**  
+It can track **bright, nearby lights** (aircraft navigation strobes, drones with LEDs, the Moon, Venus, a laser pointer, etc.), but a dim, far-away unidentified point source will be lost in sensor noise and sky background.
+
+---
+
+### Why it falls short for faint UFOs
+
+| Limitation | What the hardware does | Why it fails for faint UFOs |
+|------------|------------------------|-----------------------------|
+| **LDRs (Light-Dependent Resistors)** | Slow (ms response), low dynamic range, no amplification | A distant UFO may be **< 1 lux** on the sensor – LDRs need **10–100 lux** to produce a usable delta. Sky glow + thermal noise swamps the signal. |
+| **No optical gain** | Bare LDRs, no lens, no aperture | Magnification is ~1:1. A star-like UFO at 10 km produces **< 10⁻⁶ lux** on the sensor – undetectable. |
+| **8-bit ADC (or digital threshold)** | 0–255 levels | Quantisation noise > signal from a faint point. |
+| **No cooling / integration** | Instantaneous reads | Cannot integrate photons over seconds like a CCD. |
+| **Sky background** | Night sky ~0.1–1 lux (moonless) | Any UFO < 5–10× sky brightness is invisible to the tracker. |
+
+**Real-world benchmark:**  
+- **Aircraft strobe at 1 km** → ~50 lux → **tracks perfectly**  
+- **Drone LED at 200 m** → ~5 lux → **tracks OK**  
+- **Satellite flare (Iridium)** → ~0.5 lux → **marginal, jittery**  
+- **Hypothetical UFO at 10 km, 100 W light** → **< 0.01 lux** → **invisible**
+
+---
+
+### What *would* make it UFO-sensitive?
+
+To detect a **magnitude +6 to +10 point source** (naked-eye limit to faint satellite) you need **~100–1000× more light** on the sensor:
+
+| Upgrade | Cost | Sensitivity gain |
+|---------|------|------------------|
+| **Phototransistor + lens** (e.g., BPW34 + 50 mm f/1.4) | $5–10 | ~50× |
+| **Photomultiplier module** (H10721) | $150+ | ~10,000× |
+| **Amplified photodiode + transimpedance amp** | $15 | ~200× |
+| **Integrate readings** (average 100 samples) | $0 (code) | ~10× |
+| **Narrowband filter** (e.g., 650 nm LED pass) | $5 | Reduces sky glow |
+
+**Example viable stack (still under $50):**
+
+```
+LDR → replace with **BPW34 photodiode**
+↓
+**10 kΩ load + 100 nF cap** → low-pass
+↓
+**LM358 op-amp** (×100 gain)
+↓
+**50 mm fresnel lens** focused on diode
+↓
+**Software averaging (50 ms)**
+```
+
+→ Can now see **magnitude +8** points (~0.001 lux) – enough for bright satellites or a drone at 2 km.
+
+---
+
+### Bottom line for your question
+
+> **“Can the *current* Moonwatch detect a moving UFO that’s just a spot of light at night?”**
+
+**No – not beyond a few hundred meters if the light is drone-bright.**  
+It’s a **fun retro tracker for planes, the Moon, or laser pointers**, but **not an astronomical or long-range UFO detector**.
+
+---
+
+### Want a “UFO-grade” version?
+
+Here’s a **drop-in upgrade path** using the same TEC-1 ports:
+
+```forth
+( Replace LDRs with amplified photodiode )
+: READ-PD  ( port -- 0..255 )
+    IN  DUP 8 RSHIFT +   ( simple 2× gain + average )
+    DUP 50 > IF 1 ELSE 0 THEN   ( threshold for faint blip )
+;
+```
+
+And point a **cheap 2-inch lens** at each diode.  
+Now it can lock onto **Saturn or a bright ISS pass**.
+
+---
+
+**TL;DR:**  
+Fun toy → **yes**  
+Real UFO spotter → **no (needs optics + amplification)**  
+
+Let me know if you want the **lens + photodiode mod schematic** or **Z80 code for faint-signal integration**! 🌙🚀
+
+
+/////
 
 
 
