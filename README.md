@@ -1,5 +1,5 @@
 # tec-Moonwatch
-TEC-1, optical tracking of anything in the sky, even UFO's
+TEC-1, optical tracking of anything in the sky, even UFOs, UAPs and other demons
 
 
 # Ref
