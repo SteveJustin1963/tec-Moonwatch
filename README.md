@@ -1,11 +1,7 @@
 # tec-Moonwatch
 TEC-1, optical tracking of anything in the sky, even UFOs, UAPs and other demons
-
-
-# Ref
 - https://en.wikipedia.org/wiki/Operation_Moonwatch
-- https://github.com/SteveJustin1963/tec-DATING
--  
+ 
 
 ### Steps to Build a Fast Optical Tracker Using a Z80 SBC
 
